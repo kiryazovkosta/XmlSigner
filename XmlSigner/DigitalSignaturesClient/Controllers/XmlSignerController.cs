@@ -11,13 +11,16 @@ public class XmlSignerController : ControllerBase
 {
     private readonly IX509CertificateService _certificateService;
     private readonly ISignVerifyEnvelope _signEnvelope;
+    private readonly IBase64StringService _base64Service;
 
     public XmlSignerController(
         IX509CertificateService certificateService, 
-        ISignVerifyEnvelope signEnvelope)
+        ISignVerifyEnvelope signEnvelope,
+        IBase64StringService base64Service)
     {
         _certificateService = certificateService ?? throw new ArgumentNullException(nameof(certificateService));
         _signEnvelope = signEnvelope ?? throw new ArgumentNullException(nameof(signEnvelope));
+        _base64Service = base64Service ?? throw new ArgumentNullException(nameof(base64Service));
     }
 
     [HttpPost]
@@ -31,8 +34,8 @@ public class XmlSignerController : ControllerBase
 
         try
         {
-            data.Message = _signEnvelope.SignXmlMessage(data.Message, certificate);
-            return this.Ok(data);
+            var response = _signEnvelope.SignXmlMessage(data.Message, certificate);
+            return this.Ok(_base64Service.ToBase64String(response));
         }
         catch (Exception e)
         {
