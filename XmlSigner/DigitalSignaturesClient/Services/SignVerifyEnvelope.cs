@@ -41,17 +41,17 @@ namespace DigitalSignaturesClient.Services
                 nodeDataMessage?.AppendChild(doc.ImportNode(xmlDoc.DocumentElement, true));
             }
 
-            SignedXml signedXml = new SignedXml(doc)
+            SignedXml signedXml = new(doc)
             {
                 SigningKey = x509.GetRSAPrivateKey()
             };
 
-            Reference reference = new Reference("");
-            XmlDsigEnvelopedSignatureTransform env = new XmlDsigEnvelopedSignatureTransform();
+            Reference reference = new("");
+            XmlDsigEnvelopedSignatureTransform env = new();
             reference.AddTransform(env);
             signedXml.AddReference(reference);
 
-            KeyInfo keyInfo = new KeyInfo();
+            KeyInfo keyInfo = new();
             //keyInfo.AddClause(new RSAKeyValue((RSA) x509.PrivateKey));
             keyInfo.AddClause(new KeyInfoX509Data(x509, X509IncludeOption.EndCertOnly));
             signedXml.KeyInfo = keyInfo;
@@ -64,25 +64,24 @@ namespace DigitalSignaturesClient.Services
             return XmlFormatting(doc, Encoding.UTF8);
         }
 
-        private string XmlFormatting(XmlDocument xml, Encoding? encoding = null, Formatting formatting = Formatting.None)
+        private static string XmlFormatting(XmlDocument xml, Encoding? encoding = null, Formatting formatting = Formatting.None)
         {
             StreamReader? streamReader = null;
             MemoryStream? memoryStream = null;
 
-            if (encoding is null)
-            {
-                encoding = Encoding.UTF8;
-            }
+            encoding ??= Encoding.UTF8;
 
             try
             {
                 XmlWriter? xmlTextWriter = null;
-                XmlWriterSettings settings = new XmlWriterSettings();
-                settings.Indent = true;
-                settings.IndentChars = "  ";
-                settings.NewLineChars = "\n";
-                settings.NewLineHandling = NewLineHandling.Replace;
-                settings.Encoding = encoding;
+                XmlWriterSettings settings = new()
+                {
+                    Indent = true,
+                    IndentChars = "  ",
+                    NewLineChars = "\n",
+                    NewLineHandling = NewLineHandling.Replace,
+                    Encoding = encoding
+                };
 
                 memoryStream = new MemoryStream();
                 xmlTextWriter = XmlWriter.Create(memoryStream);

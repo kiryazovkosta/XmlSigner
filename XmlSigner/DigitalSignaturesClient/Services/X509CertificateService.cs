@@ -37,7 +37,7 @@ internal class X509CertificateService : IX509CertificateService
                 return property.Substring(i + 3, j - i - 3);
             }
 
-            return property.Substring(i + 3);
+            return property[(i + 3)..];
         }
         catch (Exception)
         {
