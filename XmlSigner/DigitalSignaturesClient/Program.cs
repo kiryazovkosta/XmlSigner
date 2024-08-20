@@ -1,8 +1,5 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Serilog;
-
 using DigitalSignaturesClient;
 using DigitalSignaturesClient.Services.Contracts;
 using DigitalSignaturesClient.Services;
@@ -24,7 +21,16 @@ builder.Services.AddWindowsService(options =>
 {
     options.ServiceName = "Digital Sign Client";
 });
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddXmlDataContractSerializerFormatters();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", configurePolicy =>
+    {
+        configurePolicy.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -36,5 +42,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowAll");
 app.MapControllers();
 app.Run();
