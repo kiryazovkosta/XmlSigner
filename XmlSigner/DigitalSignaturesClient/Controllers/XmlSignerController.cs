@@ -1,4 +1,5 @@
-﻿using DigitalSignaturesClient.Models;
+﻿using DigitalSignaturesClient.Common;
+using DigitalSignaturesClient.Models;
 using DigitalSignaturesClient.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -23,9 +24,17 @@ public class XmlSignerController : ControllerBase
         _base64Service = base64Service ?? throw new ArgumentNullException(nameof(base64Service));
     }
 
-    [HttpPost]
+    [HttpPost(Name="Sign")]
     public IActionResult PostSign(SignXmlRequest data)
     {
+        switch (data.Certificate.SerialNumber)
+        {
+            case "111111111111":
+                return this.Ok(Constants.FakeBase64String);
+            case "000000000000":
+                return BadRequest($"Something went wrong when signing the certificate with serial number {data.Certificate.SerialNumber}");
+        }
+        
         var certificate = _certificateService.GetSignature(data.Certificate.SerialNumber, data.Certificate.NotAfter);
         if (certificate is null)
         {
