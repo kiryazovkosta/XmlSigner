@@ -1,7 +1,6 @@
 ﻿using DigitalSignaturesClient.Models;
 using DigitalSignaturesClient.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Cryptography.X509Certificates;
 
 namespace DigitalSignaturesClient.Controllers;
 
@@ -19,21 +18,15 @@ public class CertificatesController : ControllerBase
     [HttpGet]
     public IActionResult GetCertificates()
     {
-        var certificates = new List<X509CertificateResponse>();
-
-        var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
-        store.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
-
-        foreach (var certificate in store.Certificates.Find(X509FindType.FindByTimeValid, DateTime.Now, false))
-        {
-            certificates.Add(new X509CertificateResponse()
+        var certificates = _certificateService.GetValidCertificates()
+            .Select(c => new X509CertificateResponse()
             {
-                Subject = _certificateService.GetCN(certificate.Subject),
-                Issuer = _certificateService.GetCN(certificate.Issuer),
-                NotAfter = certificate.NotAfter,
-                SerialNumber = certificate.SerialNumber
-            });
-        }
+                Subject = _certificateService.GetCN(c.Subject),
+                Issuer = _certificateService.GetCN(c.Issuer),
+                NotAfter = c.NotAfter,
+                SerialNumber = c.SerialNumber
+            })
+            .ToList();
 
         return this.Ok(certificates);
     }

@@ -32,9 +32,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", configurePolicy =>
     {
-        configurePolicy.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
+        configurePolicy
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
     });
 });
 builder.Services.AddEndpointsApiExplorer();

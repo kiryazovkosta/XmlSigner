@@ -44,4 +44,12 @@ internal class X509CertificateService : IX509CertificateService
             return property;
         }
     }
+
+    public IEnumerable<X509Certificate2> GetValidCertificates()
+    {
+        var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
+        store.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
+        return store.Certificates.Find(X509FindType.FindByTimeValid, DateTime.Now, false)
+            .Cast<X509Certificate2>();
+    }
 }

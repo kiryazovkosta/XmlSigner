@@ -6,4 +6,5 @@ public interface IX509CertificateService
 {
     X509Certificate2? GetSignature(string serialNumber, DateTime notAfter);
     string GetCN(string property);
+    IEnumerable<X509Certificate2> GetValidCertificates();
 }
