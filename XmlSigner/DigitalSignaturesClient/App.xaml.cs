@@ -64,7 +64,7 @@ public partial class App : WpfApplication
 
     private Icon LoadIcon()
     {
-        var iconPath = Path.Combine(AppContext.BaseDirectory, "app.ico");
+        var iconPath = Path.Combine(AppContext.BaseDirectory, "Public", "app.ico");
         if (File.Exists(iconPath))
         {
             return new Icon(iconPath);

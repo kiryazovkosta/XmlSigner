@@ -24,4 +24,14 @@
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Public\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Public\app.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
