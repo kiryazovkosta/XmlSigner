@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows;
@@ -21,6 +22,7 @@ public partial class App : WpfApplication
         base.OnStartup(e);
 
         SetupSerilog();
+        ShowStartupInfo();
         SetupTrayIcon();
         await StartWebApiAsync();
     }
@@ -33,6 +35,18 @@ public partial class App : WpfApplication
                 Path.Combine(AppContext.BaseDirectory, "logs", "xml-signer-.log"),
                 rollingInterval: RollingInterval.Day)
             .CreateLogger();
+    }
+
+    private void ShowStartupInfo()
+    {
+        System.Windows.MessageBox.Show(
+            "Digital Signatures Client is starting...\n\n" +
+            "API Endpoint: http://localhost:6050\n" +
+            "Swagger UI: http://localhost:6050/swagger/index.html\n\n" +
+            "The application will run in the system tray.",
+            "Digital Signatures Client",
+            MessageBoxButton.OK,
+            MessageBoxImage.Information);
     }
 
     private void SetupTrayIcon()
@@ -51,6 +65,10 @@ public partial class App : WpfApplication
             Enabled = false
         };
         contextMenu.Items.Add(statusItem);
+
+        var logsItem = new Forms.ToolStripMenuItem("Logs files");
+        logsItem.Click += (_, _) => ShowLogsFilesFolder();
+        contextMenu.Items.Add(logsItem);
 
         contextMenu.Items.Add(new Forms.ToolStripSeparator());
 
@@ -71,6 +89,12 @@ public partial class App : WpfApplication
         }
 
         return SystemIcons.Application;
+    }
+
+    private void ShowLogsFilesFolder()
+    {
+        string logFilesFolder = Path.Combine(Directory.GetCurrentDirectory(), "logs");
+        Process.Start("explorer.exe", logFilesFolder);
     }
 
     private void ShowBalloonTip()
