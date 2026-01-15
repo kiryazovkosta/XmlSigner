@@ -18,64 +18,6 @@ namespace DigitalSignaturesClient.Services
             _base64Service = base64Service ?? throw new ArgumentNullException(nameof(base64Service));
         }
 
-        // public XmlDocument SignXml(string xmlContent, X509Certificate2 certificate)
-        // {
-        //     // Load the original XML document
-        //     XmlDocument xmlDoc = new XmlDocument();
-        //     xmlDoc.PreserveWhitespace = true;
-        //     xmlDoc.LoadXml(_base64Service.FromBase64String(xmlContent));
-        //
-        //     // Wrap the XML inside SignedMessage -> ns2:DataMessage
-        //     XmlDocument wrappedXmlDoc = new XmlDocument();
-        //     wrappedXmlDoc.PreserveWhitespace = true;
-        //     string wrappedContent = $"<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedMessage><ns2:DataMessage xsi:schemaLocation=\"http://www.customs.bg/BgDictionary BgMessages.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:ns2=\"http://www.customs.bg/BgDictionary\">{xmlDoc.DocumentElement.OuterXml}</ns2:DataMessage></SignedMessage>";
-        //     wrappedXmlDoc.LoadXml(wrappedContent);
-        //
-        //     // Create a SignedXml object
-        //     SignedXml signedXml = new SignedXml(wrappedXmlDoc);
-        //     signedXml.SigningKey = certificate.GetRSAPrivateKey();
-        //
-        //     // Create a reference to be signed (targeting the DataMessage content)
-        //     Reference reference = new Reference();
-        //     reference.Uri = "";
-        //
-        //     // Apply the enveloped transform
-        //     XmlDsigEnvelopedSignatureTransform env = new XmlDsigEnvelopedSignatureTransform();
-        //     reference.AddTransform(env);
-        //
-        //     // Apply the XPath transform to select the content of ns2:DataMessage
-        //     var xpath = CreateXPathTransform("/SignedMessage/ns2:DataMessage/*");
-        //     reference.AddTransform(xpath);
-        //
-        //     // Apply the canonicalization transform
-        //     XmlDsigC14NTransform c14Transform = new XmlDsigC14NTransform();
-        //     reference.AddTransform(c14Transform);
-        //
-        //     // Add the reference to the SignedXml object
-        //     signedXml.AddReference(reference);
-        //
-        //     // Specify the signature method (RSA-SHA1)
-        //     signedXml.SignedInfo!.SignatureMethod = SignedXml.XmlDsigRSASHA1Url;
-        //     reference.DigestMethod = SignedXml.XmlDsigSHA1Url;
-        //
-        //
-        //     // Include the certificate in the signature
-        //     KeyInfo keyInfo = new KeyInfo();
-        //     keyInfo.AddClause(new KeyInfoX509Data(certificate));
-        //     signedXml.KeyInfo = keyInfo;
-        //
-        //     // Compute the signature
-        //     signedXml.ComputeSignature();
-        //
-        //     // Get the XML representation of the signature
-        //     XmlElement xmlSignature = signedXml.GetXml();
-        //
-        //     // Append the signature to the SignedMessage element
-        //     wrappedXmlDoc.DocumentElement.AppendChild(wrappedXmlDoc.ImportNode(xmlSignature, true));
-        //
-        //     return wrappedXmlDoc;
-        // }
-
         public string SignXmlMessage(string base64String, X509Certificate2 x509)
         {
             if (string.IsNullOrWhiteSpace(base64String))

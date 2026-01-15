@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows;
+using DigitalSignaturesClient.Middleware;
 using DigitalSignaturesClient.Services;
 using DigitalSignaturesClient.Services.Contracts;
 using Microsoft.AspNetCore.Builder;
@@ -138,6 +139,7 @@ public partial class App : WpfApplication
             _webApp.UseSwaggerUI();
             _webApp.UseCors("AllowAll");
             _webApp.MapControllers();
+            _webApp.UseMiddleware<LogPostRequestsMiddleware>();
 
             Log.Information("Starting Web API on port 6050...");
 
