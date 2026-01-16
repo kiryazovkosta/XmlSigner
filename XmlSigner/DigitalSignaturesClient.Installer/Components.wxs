@@ -1,0 +1,51 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+    <ComponentGroup Id="ApplicationFiles" Directory="INSTALLFOLDER">
+      <Files Include="$(var.DigitalSignaturesClient.TargetDir)**" />
+    </ComponentGroup>
+
+    <ComponentGroup Id="StartupRegistry" Directory="TARGETDIR">
+      <Component>
+        <RegistryKey Root="HKCU" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Run" ForceCreateOnInstall="yes">
+          <RegistryValue Type="string" Name="DigitalSignaturesClient" Value="[INSTALLFOLDER]DigitalSignaturesClient.exe" />
+        </RegistryKey>
+      </Component>
+    </ComponentGroup>
+
+    <ComponentGroup Id="Shortcuts" Directory="INSTALLFOLDER">
+      <!-- Start Menu Shortcut -->
+      <Component Id="StartMenuShortcut" Guid="*">
+        <Shortcut Id="StartMenuShortcut"
+                  Name="Xml Digital Signer"
+                  Target="[INSTALLFOLDER]DigitalSignaturesClient.exe"
+                  WorkingDirectory="INSTALLFOLDER"
+                  Directory="ProgramMenuFolder"
+                  Icon="AppIcon.ico" />
+        <RemoveFolder Id="CleanUpStartMenu" Directory="ProgramMenuFolder" On="uninstall"/>
+        <RegistryValue Root="HKCU" Key="Software\ENSIControl\DigitalSignaturesClient"
+                       Name="StartMenuShortcut" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+
+      <!-- Desktop Shortcut -->
+      <Component Id="DesktopShortcut" Guid="*">
+        <Shortcut Id="DesktopShortcut"
+                  Name="Xml Digital Signer"
+                  Target="[INSTALLFOLDER]DigitalSignaturesClient.exe"
+                  WorkingDirectory="INSTALLFOLDER"
+                  Directory="DesktopFolder"
+                  Icon="AppIcon.ico" />
+        <RegistryValue Root="HKCU" Key="Software\ENSIControl\DigitalSignaturesClient"
+                       Name="DesktopShortcut" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+    </ComponentGroup>
+
+    <!-- Logs folder with write permissions for Users (preserved on uninstall) -->
+    <ComponentGroup Id="LogsFolder" Directory="LogsFolder">
+      <Component Id="LogsFolderComponent" Guid="A8D7E3B2-4C6F-4A1E-9B5D-2F8C1E7A3B9D" Permanent="yes">
+        <CreateFolder>
+          <Permission User="Users" GenericAll="yes" />
+        </CreateFolder>
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

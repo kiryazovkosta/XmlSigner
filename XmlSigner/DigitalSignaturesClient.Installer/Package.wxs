@@ -1,0 +1,35 @@
+﻿<!-- Define the variables in "$(var.*) expressions" -->
+<?define Name = "Xml Digital Signer" ?>
+<?define Manufacturer = "ENSI Control" ?>
+<?define Version = "1.0.0.0" ?>
+<?define UpgradeCode = "E7B3C9F1-2A4D-4E8B-9C6F-1D5A7B3E9F2C" ?>
+
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+  <Package
+    Name="$(Name)"
+    Language="1033"
+    Version="$(Version)"
+    Manufacturer="$(Manufacturer)"
+    UpgradeCode="$(UpgradeCode)"
+    InstallerVersion="500"
+    Scope="perMachine">
+    
+    <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
+
+    <MediaTemplate EmbedCab="yes" />
+
+    <!-- Application Icon -->
+    <Icon Id="AppIcon.ico" SourceFile="$(var.DigitalSignaturesClient.TargetDir)Public\app.ico" />
+
+    <Feature Id="ProductFeature" Title="Digital Signatures Client" Level="1" Description="Digital Signatures Client application with Web API">
+      <ComponentGroupRef Id="ApplicationFiles" />
+      <ComponentGroupRef Id="StartupRegistry" />
+      <ComponentGroupRef Id="Shortcuts" />
+      <ComponentGroupRef Id="LogsFolder" />
+    </Feature>
+
+    <!-- UI with folder selection -->
+    <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
+  </Package>
+</Wix>
