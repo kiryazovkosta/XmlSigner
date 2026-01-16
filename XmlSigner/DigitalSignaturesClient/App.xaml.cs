@@ -94,7 +94,10 @@ public partial class App : WpfApplication
 
     private void ShowLogsFilesFolder()
     {
-        string logFilesFolder = Path.Combine(Directory.GetCurrentDirectory(), "logs");
+        Log.Error(Directory.GetCurrentDirectory());
+        Log.Error(AppContext.BaseDirectory);
+        string logFilesFolder = Path.Combine(AppContext.BaseDirectory, "logs");
+        Log.Error(logFilesFolder);
         Process.Start("explorer.exe", logFilesFolder);
     }
 
