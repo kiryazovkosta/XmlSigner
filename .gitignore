@@ -399,3 +399,4 @@ FodyWeavers.xsd
 
 # Windows reserved device name (created accidentally)
 nul
+wwwroot/
