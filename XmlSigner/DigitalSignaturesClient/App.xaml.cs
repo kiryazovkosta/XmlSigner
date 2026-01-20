@@ -7,6 +7,7 @@ using DigitalSignaturesClient.Services;
 using DigitalSignaturesClient.Services.Contracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Serilog;
 using Forms = System.Windows.Forms;
 using WpfApplication = System.Windows.Application;
@@ -61,6 +62,12 @@ public partial class App : WpfApplication
 
         var contextMenu = new Forms.ContextMenuStrip();
 
+        var openBrowserItem = new Forms.ToolStripMenuItem("Open in Browser");
+        openBrowserItem.Click += (_, _) => OpenInBrowser();
+        contextMenu.Items.Add(openBrowserItem);
+
+        contextMenu.Items.Add(new Forms.ToolStripSeparator());
+
         var statusItem = new Forms.ToolStripMenuItem("Running on port 6050")
         {
             Enabled = false
@@ -78,7 +85,7 @@ public partial class App : WpfApplication
         contextMenu.Items.Add(exitItem);
 
         _trayIcon.ContextMenuStrip = contextMenu;
-        _trayIcon.DoubleClick += (_, _) => ShowBalloonTip();
+        _trayIcon.DoubleClick += (_, _) => OpenInBrowser();
     }
 
     private Icon LoadIcon()
@@ -108,6 +115,15 @@ public partial class App : WpfApplication
             "Digital Sign Client",
             "API running on http://localhost:6050",
             Forms.ToolTipIcon.Info);
+    }
+
+    private void OpenInBrowser()
+    {
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = "http://localhost:6050",
+            UseShellExecute = true
+        });
     }
 
     private async Task StartWebApiAsync()
@@ -141,7 +157,19 @@ public partial class App : WpfApplication
             _webApp.UseSwagger();
             _webApp.UseSwaggerUI();
             _webApp.UseCors("AllowAll");
+
+            var wwwrootPath = Path.Combine(AppContext.BaseDirectory, "wwwroot", "browser");
+            if (Directory.Exists(wwwrootPath))
+            {
+                var fileProvider = new PhysicalFileProvider(wwwrootPath);
+                _webApp.UseDefaultFiles(new DefaultFilesOptions { FileProvider = fileProvider });
+                _webApp.UseStaticFiles(new StaticFileOptions { FileProvider = fileProvider });
+            }
+
             _webApp.MapControllers();
+
+            _webApp.MapFallbackToFile("browser/index.html");
+
             _webApp.UseMiddleware<LogPostRequestsMiddleware>();
 
             Log.Information("Starting Web API on port 6050...");

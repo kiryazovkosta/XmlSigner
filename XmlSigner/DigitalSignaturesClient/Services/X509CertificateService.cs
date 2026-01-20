@@ -50,6 +50,7 @@ internal class X509CertificateService : IX509CertificateService
         var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
         store.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
         return store.Certificates.Find(X509FindType.FindByTimeValid, DateTime.Now, false)
+            .Where(c => c.Subject != "CN=localhost")
             .Cast<X509Certificate2>();
     }
 }

@@ -38,7 +38,7 @@ public class XmlSignerController : ControllerBase
         var certificate = _certificateService.GetSignature(data.Certificate.SerialNumber, data.Certificate.NotAfter);
         if (certificate is null)
         {
-            return NotFound();
+            return NotFound("There is no certificate with provided SerialNumber and NotAfter");
         }
 
         try

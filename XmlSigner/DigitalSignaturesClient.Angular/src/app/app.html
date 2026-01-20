@@ -1,0 +1,79 @@
+<div class="container">
+  <header>
+    <h1>Клиент за цифрови подписи</h1>
+    <p>Услуга за подписване на XML документи</p>
+  </header>
+
+  @if (error()) {
+    <div class="error">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <div class="loading">Зареждане...</div>
+  }
+
+  <section class="certificates">
+    <h2>Налични сертификати</h2>
+    <button type="button" (click)="loadCertificates()" [disabled]="loading()">Опресни</button>
+
+    @if (certificates().length === 0 && !loading()) {
+      <p class="no-data">Няма сертификати в хранилището за сертификати.</p>
+    }
+
+    <div class="cert-list">
+      @for (cert of certificates(); track cert.serialNumber) {
+        <div
+          class="cert-item"
+          [class.selected]="selectedCertificate()?.serialNumber === cert.serialNumber"
+          (click)="selectCertificate(cert)">
+          <div class="cert-subject">{{ cert.subject }}</div>
+          <div class="cert-details">
+            <span>Издател: {{ cert.issuer }}</span>
+            <span>Изтича: {{ cert.notAfter | date:'mediumDate' }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="sign-xml">
+    <h2>Подписване на XML документ</h2>
+
+    @if (selectedCertificate()) {
+      <div class="selected-cert">
+        Selected: <strong>{{ selectedCertificate()?.subject }}</strong>
+      </div>
+    } @else {
+      <div class="hint">Моля, изберете сертификат от горния списък</div>
+    }
+
+    <div class="form-group">
+      <label for="xmlMessage">XML съобщение:</label>
+      <textarea
+        id="xmlMessage"
+        [ngModel]="xmlMessage()"
+        (ngModelChange)="xmlMessage.set($event)"
+        placeholder="Въведете XML съдържание за подписване..."
+        rows="8"></textarea>
+    </div>
+
+    <button
+      type="button"
+      class="sign-btn"
+      (click)="signXml()"
+      [disabled]="loading() || !selectedCertificate() || !xmlMessage()">
+      Подпишете XML
+    </button>
+  </section>
+
+  @if (signedXml()) {
+    <section class="result">
+      <h2>Signed XML Result</h2>
+      <textarea readonly rows="12" aria-label="Signed XML Result">{{ signedXml() }}</textarea>
+    </section>
+  }
+
+  <footer>
+    <a href="/swagger" target="_blank">Swagger API Documentation</a>
+  </footer>
+</div>
