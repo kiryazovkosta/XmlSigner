@@ -62,8 +62,8 @@ export class App implements OnInit {
         this.signedXml.set(result);
         this.loading.set(false);
       },
-      error: (err) => {
-        this.error.set('Failed to sign XML: ' + err.message);
+      error: (err: string) => {
+        this.error.set(err);
         this.loading.set(false);
       }
     });
