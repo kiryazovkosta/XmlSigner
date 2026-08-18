@@ -30,6 +30,8 @@ public class XmlSignerController : ControllerBase
     [HttpPost(Name="Sign")]
     public async Task<ActionResult> PostSign(SignXmlRequest data)
     {
+        _logger.LogInformation("Received sign request for certificate {SerialNumber}", data.Certificate.SerialNumber);
+
         switch (data.Certificate.SerialNumber)
         {
             case "111111111111":
@@ -41,6 +43,8 @@ public class XmlSignerController : ControllerBase
         var certificate = _certificateService.GetSignature(data.Certificate.SerialNumber, data.Certificate.NotAfter);
         if (certificate is null)
         {
+            _logger.LogWarning("Certificate {SerialNumber} not found (NotAfter: {NotAfter})", data.Certificate.SerialNumber, data.Certificate.NotAfter);
+
             return Problem(
                 statusCode: StatusCodes.Status404NotFound,
                 type: $"/errors/CertificateNotFound",
@@ -52,6 +56,7 @@ public class XmlSignerController : ControllerBase
         try
         {
             var response = _signEnvelope.SignXmlMessage(data.Message, certificate);
+            _logger.LogInformation("Successfully signed XML for certificate {SerialNumber}", data.Certificate.SerialNumber);
             return this.Ok(_base64Service.ToBase64String(response));
         }
         catch (Exception ex)
